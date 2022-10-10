@@ -8,14 +8,52 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowAltCircleUp } from '@fortawesome/free-regular-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { faBuilding, faUserGroup } from '@fortawesome/free-solid-svg-icons'
+import { useEffect, useState } from 'react'
+import api from '../../../../lib/axios'
+
+interface UserData {
+  avatar_url: string
+  name: string
+  bio: string | null
+  login: string
+  company: string | null
+  followers: number
+}
 
 export function Profile() {
+  const [user, setUser] = useState<UserData>({} as UserData)
+
+  async function loadUser() {
+    const localStorageUser = localStorage.getItem('@github-blog:user')
+
+    if (localStorageUser === null) {
+      const response = await api.get<UserData>('/users/RenanArantes')
+
+      setUser({
+        avatar_url: response.data.avatar_url,
+        name: response.data.name,
+        bio: response.data.bio,
+        login: response.data.login,
+        company: response.data.company,
+        followers: response.data.followers,
+      })
+
+      localStorage.setItem('@github-blog:user', JSON.stringify(user))
+    } else {
+      setUser(JSON.parse(localStorageUser))
+    }
+  }
+
+  useEffect(() => {
+    loadUser()
+  }, [])
+
   return (
     <ProfileContainer>
-      <img src="http://www.github.com/RenanArantes.png" alt="avatar image" />
+      <img src={user.avatar_url} alt={user.name} />
       <ProfileDataContainer>
         <span style={{ marginBottom: '8px' }}>
-          <h2>Nome</h2>
+          <h2>{user.name}</h2>
           <LinkBase to="/">
             GITHUB{' '}
             <FontAwesomeIcon
@@ -25,27 +63,34 @@ export function Profile() {
           </LinkBase>
         </span>
         <span>
-          <p>
-            Tristique volutpat pulvinar vel massa, pellentesque egestas. Eu
-            viverra massa quam dignissim aenean malesuada suscipit. Nunc,
-            volutpat pulvinar vel mass.
-          </p>
+          {user.bio !== null ? (
+            <p>{user.bio}</p>
+          ) : (
+            <p>Biografia não escrita pelo usuário</p>
+          )}
         </span>
         <InfoContainer>
           <label>
             <FontAwesomeIcon icon={faGithub} style={{ marginRight: '8px' }} />
-            UserName
+            {user.login}
           </label>
           <label>
             <FontAwesomeIcon icon={faBuilding} style={{ marginRight: '8px' }} />
-            Company
+            {user.company !== null ? (
+              <p>{user.company}</p>
+            ) : (
+              'Usuário sem empresa'
+            )}
           </label>
           <label>
             <FontAwesomeIcon
               icon={faUserGroup}
               style={{ marginRight: '8px' }}
             />
-            x followers
+
+            {user.followers === 0 && `${user.followers} sem seguidores`}
+            {user.followers === 1 && `${user.followers} seguidor(a)`}
+            {user.followers > 1 && `${user.followers} seguidores`}
           </label>
         </InfoContainer>
       </ProfileDataContainer>
