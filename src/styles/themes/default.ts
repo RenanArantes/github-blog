@@ -14,5 +14,5 @@ export const defaultTheme = {
       input: '040F1A',
     },
   },
-  transition: '0.5s',
+  transition: '1.5s',
 }
