@@ -11,7 +11,7 @@ export const defaultTheme = {
       post: '#112131',
       profile: '#0B1B2B',
       background: '#071422',
-      input: '040F1A',
+      input: '#040F1A',
     },
   },
   transition: '1.5s',
