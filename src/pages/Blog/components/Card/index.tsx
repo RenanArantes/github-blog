@@ -1,17 +1,28 @@
 import { CardContainer, Title } from './styles'
 
-export function Card() {
+interface Issue {
+  id: number
+  url: string
+  title: string
+  body: string
+  state: 'open' | 'closed'
+  created_at: string
+}
+
+interface CardProps {
+  issue: Issue
+}
+
+export function Card({ issue }: CardProps) {
+  const { title, created_at, body } = issue
+
   return (
     <CardContainer>
       <span>
-        <Title>asasdasdasdas</Title>
-        <time>x dias</time>
+        <Title>{title}</Title>
+        <time>{created_at}</time>
       </span>
-      <p>
-        Programming languages all have built-in data structures, but these often
-        differ from one language to another. This article attempts to list the
-        built-in data structures available in...
-      </p>
+      <p>{body}</p>
     </CardContainer>
   )
 }
