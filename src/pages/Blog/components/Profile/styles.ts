@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 
 export const ProfileContainer = styled.div`
   display: flex;
@@ -36,7 +35,7 @@ export const ProfileDataContainer = styled.div`
     line-height: 130%;
   }
 `
-export const LinkBase = styled(Link)`
+export const LinkBase = styled.a`
   font-size: 12px;
   color: ${(props) => props.theme.colors.blue};
   text-decoration: none;

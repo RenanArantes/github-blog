@@ -22,6 +22,10 @@ export const CardContainer = styled.div`
     font-size: 14px;
     color: ${(props) => props.theme.colors.base.span};
   }
+
+  &:hover {
+    outline: 2px solid ${(props) => props.theme.colors.base.label};
+  }
 `
 export const Title = styled.p`
   font-size: 32px;

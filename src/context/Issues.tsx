@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useEffect, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import api from '../lib/axios'
 
 interface Issue {
@@ -8,11 +14,17 @@ interface Issue {
   body: string
   state: 'open' | 'closed'
   created_at: string
+  user: {
+    name: string
+    login: string
+  }
+  comments: number
+  number: number
 }
 
 interface IssuesContextType {
   issues: Issue[]
-  fetchIssues: () => void
+  fetchIssues: (query?: string | number) => void
 }
 
 interface IssuesProviderProps {
@@ -22,22 +34,56 @@ interface IssuesProviderProps {
 export const IssueContext = createContext({} as IssuesContextType)
 
 export function IssuesProvider({ children }: IssuesProviderProps) {
-  const [issues, setIssue] = useState<Issue[]>([])
+  const [issues, setIssues] = useState<Issue[]>([])
 
-  async function fetchIssues() {
-    console.log('fetching issues')
-    const response = await api.get(
-      '/search/issues?q=%20repo:RenanArantes/github-blog',
-    )
+  const fetchIssues = useCallback(async (query?: string | number) => {
+    const storagedIssues = localStorage.getItem('!@github-blog:issues')
 
-    const fetchedIssues: Issue[] = response.data.items
+    if (storagedIssues) {
+      console.log(
+        'pegando do localStorage para evitar muitos requests na API\n' +
+          'do GitHub durante o desenvolvimento',
+      )
+      setIssues(JSON.parse(storagedIssues))
+    } else {
+      console.log('fetching issues')
 
-    setIssue(fetchedIssues)
-  }
+      let fetchedIssues: Issue[] = []
+
+      if (typeof query === 'string') {
+        console.log('tem parametro string')
+        const response = await api.get(
+          `/search/issues?q=${query}%20repo:RenanArantes/github-blog`,
+        )
+
+        fetchedIssues = response.data.items
+        console.log(fetchedIssues)
+      } else if (typeof query === 'number') {
+        console.log('tem parametro number')
+        const response = await api.get(
+          `/repos/RenanArantes/github-blog/issues/${query}`,
+        )
+
+        fetchedIssues = response.data.items
+        console.log(fetchedIssues)
+      } else {
+        console.log('nao tem parametro')
+        const response = await api.get(
+          `/search/issues?q=%20repo:RenanArantes/github-blog`,
+        )
+
+        fetchedIssues = response.data.items
+      }
+
+      setIssues(fetchedIssues)
+      console.log(issues)
+      // localStorage.setItem('@github-blog:issues', JSON.stringify(fetchedIssues))
+    }
+  }, [])
 
   useEffect(() => {
     fetchIssues()
-  }, [])
+  }, [fetchIssues])
 
   return (
     <IssueContext.Provider value={{ issues, fetchIssues }}>

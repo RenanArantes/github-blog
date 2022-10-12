@@ -18,13 +18,14 @@ interface UserData {
   login: string
   company: string | null
   followers: number
+  html_url: string
 }
 
 export function Profile() {
   const [user, setUser] = useState<UserData>({} as UserData)
 
   async function loadUser() {
-    const localStorageUser = localStorage.getItem('@github-blog:user')
+    const localStorageUser = localStorage.getItem('!@github-blog:user')
 
     if (localStorageUser === null) {
       const response = await api.get<UserData>('/users/RenanArantes')
@@ -36,6 +37,7 @@ export function Profile() {
         login: response.data.login,
         company: response.data.company,
         followers: response.data.followers,
+        html_url: response.data.html_url,
       })
 
       localStorage.setItem('@github-blog:user', JSON.stringify(user))
@@ -54,7 +56,7 @@ export function Profile() {
       <ProfileDataContainer>
         <span style={{ marginBottom: '8px' }}>
           <h2>{user.name}</h2>
-          <LinkBase to="/">
+          <LinkBase href={user.html_url} target="_blank">
             GITHUB{' '}
             <FontAwesomeIcon
               icon={faArrowAltCircleUp}

@@ -13,9 +13,7 @@ export function Home() {
       <Profile />
       <SearchForm />
       <PostContainer>
-        {issues.map((issue) => (
-          <Card key={issue.id} issue={issue} />
-        ))}
+        {issues && issues.map((issue) => <Card key={issue.id} issue={issue} />)}
       </PostContainer>
     </BlogContainer>
   )

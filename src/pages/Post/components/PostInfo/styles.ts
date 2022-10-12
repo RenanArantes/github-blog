@@ -33,6 +33,22 @@ export const LinkBase = styled(Link)`
     transition: ${(props) => props.theme.transition};
   }
 `
+export const LinkHtml = styled.a`
+  font-size: 12px;
+  color: ${(props) => props.theme.colors.blue};
+  text-decoration: none;
+
+  &:visited {
+    color: ${(props) => props.theme.colors.blue};
+  }
+
+  &:hover {
+    text-decoration: underline;
+
+    transition: ${(props) => props.theme.transition};
+  }
+`
+
 export const Title = styled.p`
   margin-top: 20px;
   margin-bottom: 10px;
